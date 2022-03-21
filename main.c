@@ -6,22 +6,24 @@
 typedef unsigned int u32;
 
 int main() {
-    char *x;
+    char *x = malloc(sizeof(char)*1);
+    assert(x!=NULL);
     u32 y, z;
     FILE *fp;
-    size_t i = 0;
 
     unsigned int *ordArray = malloc(sizeof(u32)*3);
+    assert(ordArray!=NULL);
     
     fp = fopen("datos.txt", "r");
 
-    while(i<3){
+    for(size_t i = 0; i<3; ++i){
         fscanf(fp, "%c %u %u\n", x, &y, &z);
         ordArray[i] = y;
         printf("%s %u %u\n", x, ordArray[i], z);
-        ++i;
     }
     
-    
+    fclose(fp);
+    free(x);
+    free(ordArray);
     return 0;
 }
