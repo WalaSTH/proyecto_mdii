@@ -1,1 +1,1 @@
-Simple proyecto hecho en C sobre recorrido de grafos
+Simple project made in C about graph coloring
