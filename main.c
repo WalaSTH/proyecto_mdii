@@ -2,23 +2,33 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
-typedef unsigned int u32;
+typedef uint32_t u32;
 
 int main() {
-    char *x = malloc(sizeof(char)*2);
-    assert(x!=NULL);
-    u32 y, z, n;
-    FILE *fp;
+    char *id = malloc(sizeof(char)*2);
+    assert(id!=NULL);
+    u32 y = 0, z = 0, nodes = 0, edges = 0;
+    FILE *fp = NULL;
 
-    n = 3;
-    unsigned int *ordArray = malloc(sizeof(u32)*(2*n));
+    fp = fopen("datos.txt", "r");
+    assert(fp != NULL);
+    // while(fscanf(fp, "%c %*s\n", id) == 1 && strcmp(id, "c")==0){
+    //     printf("id=%s", id);
+    //     if(strcmp(id, "c")==0)
+    //         continue;
+    //     else
+    //         break;
+    // }
+    fscanf(fp, "%c %*s %u %u\n", id, &nodes, &edges);
+    assert(strcmp(id,"p") == 0);
+    
+    unsigned int *ordArray = malloc(sizeof(u32)*(2*edges));
     assert(ordArray!=NULL);
     
-    // Empiezo a leer datos
-    fp = fopen("datos.txt", "r");
-    for(size_t i = 0; i<n; ++i){
-        fscanf(fp, "%c %u %u\n", x, &y, &z);
+    for(size_t i = 0; i<edges; ++i){
+        fscanf(fp, "%c %u %u\n", id, &y, &z);
         
         // Forma de indezar ordArray[ancho * fila + columna]
         ordArray[2*i] = y;
@@ -26,12 +36,13 @@ int main() {
     }
     
     fclose(fp);
-    // Termine de leer datos
+    fp = NULL;
 
-    for(u32 i=0; i<(2*n); ++i)
-        printf("%u\n", ordArray[i]);
+    for(u32 i=0; i<edges; ++i)
+        printf("%u %u\n", ordArray[2*i], ordArray[2*i+1]);
     
-    free(x);
+    free(id);
     free(ordArray);
+    id = NULL, ordArray = NULL;
     return 0;
 }
