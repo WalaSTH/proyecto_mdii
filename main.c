@@ -8,6 +8,7 @@
 // TODO: Manage sanitize
 
 int main() {
+    Grafo G = NULL;
     char *id = malloc(sizeof(char)*2);
     assert(id!=NULL);
     u32 y = 0, z = 0, nodes = 0, edges = 0;
@@ -30,12 +31,14 @@ int main() {
         return 0;
     }
     
+    assert(edges>=2);
     unsigned int *ordArray = malloc(sizeof(u32)*(2*edges));
-    assert(ordArray!=NULL);
+    G->vecinos = malloc(sizeof(u32)*nodes);
+    assert(ordArray!=NULL && G->vecinos!=NULL);
     
     for(size_t i = 0; i<edges; ++i){
         fscanf(fp, "%c %u %u\n", id, &y, &z);
-        
+
         // Forma de indezar ordArray[ancho * fila + columna]
         ordArray[2*i] = y;
         ordArray[2*i+1] = z;
@@ -55,8 +58,9 @@ int main() {
 
 // TODO: Implement
 Grafo ConstruccionDelGrafo(){
-    Grafo G = NULL;
-    return G;
+    // Grafo G = NULL;
+    // return G;
+
 }
 
 // REVIEW: Needs testing
