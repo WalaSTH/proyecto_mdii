@@ -18,5 +18,5 @@ run:
 gdb:
 	$(CC) $(CTEST) -fsanitize=address,undefined -o $(TARGET) -DNDEBUG $(TARGET).c
 
-clean: 
+clean:
 	  $(RM) $(TARGET) $(COMPILED)
