@@ -14,7 +14,7 @@
 
 //Grafo es un puntero a una estructura, la cual esta definida en el .h de arriba
 
-typedef struct GrafoSt *Grafo;
+typedef GrafoSt *Grafo;
 
 
 //construccion/destruccion del grafo
