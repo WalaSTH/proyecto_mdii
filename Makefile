@@ -1,22 +1,41 @@
 CC = gcc
-
 CFLAGS = -Wall -Wextra -O3 -std=c99
-CTEST = -Wall -Wextra -O3 -std=c99 -g
-
+CTEST = -Wall -Wextra -O3 -std=c99 -g -fsanitize=address,undefined -DNDEBUG
+SOURCES = EstructuraGrafo.c main.c
+OBJECTS = $(SOURCES:.c=.o)
 TARGET = main
-COMPILED = $(TARGET:.c:.o)
+
+.PHONY: clean
 
 all: $(TARGET)
 
-$(TARGET): $(TARGET).c
-	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJECTS) $(LFLAGS) $(LIBS)
 
-run:
-	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
-	./$(TARGET)
+debug: $(OBJECTS)
+	$(CC) $(CTEST) -o $(TARGET) $(OBJECTS) $(LFLAGS) $(LIBS)
 
-gdb:
-	$(CC) $(CTEST) -fsanitize=address,undefined -o $(TARGET) -DNDEBUG $(TARGET).c
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	  $(RM) $(TARGET) $(COMPILED)
+	$(RM) $(OBJECTS) $(TARGET)
+
+# TARGET = main
+# EXTRA = EstructuraGrafo
+# COMPILED = $(TARGET:.c:.o)
+
+# all: $(TARGET)
+
+# $(TARGET): $(TARGET).c
+# 	$(CC) $(CFLAGS) $(TARGET).c $(EXTRA).c -o main
+
+# run:
+# 	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
+# 	./$(TARGET)
+
+# gdb:
+# 	$(CC) $(CTEST) -fsanitize=address,undefined -o $(TARGET) -DNDEBUG $(TARGET).c
+
+# clean:
+# 	  $(RM) $(TARGET) $(COMPILED)
