@@ -20,22 +20,3 @@ debug: $(OBJECTS)
 
 clean:
 	$(RM) $(OBJECTS) $(TARGET)
-
-# TARGET = main
-# EXTRA = EstructuraGrafo
-# COMPILED = $(TARGET:.c:.o)
-
-# all: $(TARGET)
-
-# $(TARGET): $(TARGET).c
-# 	$(CC) $(CFLAGS) $(TARGET).c $(EXTRA).c -o main
-
-# run:
-# 	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
-# 	./$(TARGET)
-
-# gdb:
-# 	$(CC) $(CTEST) -fsanitize=address,undefined -o $(TARGET) -DNDEBUG $(TARGET).c
-
-# clean:
-# 	  $(RM) $(TARGET) $(COMPILED)

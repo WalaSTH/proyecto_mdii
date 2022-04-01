@@ -31,7 +31,7 @@ static int CompLadoP(const void *lado1, const void *lado2){
 
 Grafo ConstruccionDelGrafo(){
     Grafo G = malloc(sizeof(struct GrafoSt));
-    FILE *fp = fopen("datos.txt", "r");
+    FILE *fp = fopen("./grafos/grafino.txt", "r");
     assert(G!=NULL && fp != NULL);
     bool error = false;
     u32 read = 0;
@@ -88,11 +88,7 @@ Grafo ConstruccionDelGrafo(){
     }
 
     if (error){
-        if (G->vertices != NULL)
-            free(G->vertices);
-        if (G->vecinos != NULL)
-            free(G->vecinos);
-        free(G);
+        DestruccionDelGrafo(G);
         return NULL;
     }
 
@@ -123,7 +119,7 @@ Grafo ConstruccionDelGrafo(){
         Vertice newVer = bigArray[i]->a;
         if(newVer->nombre == anterior->nombre){
             /* Es el mismo vertice */
-            anterior->grado++;
+            ++anterior->grado;
             if(mayorGrado < anterior->grado){
                 mayorGrado = anterior->grado;
             }
@@ -139,28 +135,48 @@ Grafo ConstruccionDelGrafo(){
     }
     G->delta = mayorGrado;
 
-    for (u32 i = 0; i < G->n_vertices; i++)
+    for (u32 i = 0; i < G->n_vertices; ++i)
         printf("Vértice %u.\tnombre = %u,\tgrado = %u,\tposición = %u,\tíndiceVec = %u\n",
                i, G->vertices[i]->nombre, G->vertices[i]->grado,
                G->vertices[i]->posicion, G->vertices[i]->indiceVec);
     printf("\n");
+    printf("Vecinos del vértice 1:");
+    for (u32 i = 0; i < G->vertices[0]->grado; ++i)
+        printf(" %u ", G->vecinos[G->vertices[0]->indiceVec + i]->b->nombre);
+    printf("\n");
+    printf("Delta= %u\n", G->delta);
     return G;
 }
 
-// REVIEW: Needs testing (usar orden O(m))
 void DestruccionDelGrafo(Grafo G){
     assert(G!=NULL);
-    // u32 n = G->n_vertices;
-
-    // free(G->nameGrades);
-    // G->nameGrades = NULL;
-    // for (size_t i=0; i<n; ++i){
-    //     /*free(G->vecinos[i]);
-    //     G->vecinos[i] = NULL;*/
-    // }
-
-    // free(G->vecinos);
-    // G->vecinos = NULL;
+    Vertice ver_a = NULL, ver_b = NULL;
+    Lado edge = NULL;
+    
+    for (u32 i = 0; i < 2 * G->m_lados; ++i) {
+        edge = G->vecinos[i];
+        if(edge != NULL) {
+            ver_a = edge->a, ver_b = edge->b; 
+            if(ver_a != NULL) {
+                free(ver_a);
+                ver_a = NULL;
+            }
+            if(ver_b != NULL) {
+                free(ver_b);
+                ver_b = NULL;
+            }
+            free(edge);
+            edge = NULL;
+        }
+    }
+    if (G->vecinos != NULL){
+        free(G->vecinos);   
+        G->vecinos = NULL;
+    }
+    if (G->vertices != NULL){
+        free(G->vertices);
+        G->vertices = NULL;
+    }
     free(G);
     G = NULL;
 }
@@ -185,10 +201,7 @@ void DestruccionDelGrafo(Grafo G){
 //     return G->nameGrades[2*i+1];
 // }
 
-// // REVIEW: Needs testing
-// u32 IndiceONVecino(u32 j,u32 k,Grafo G){
-//     return G->vecinos[j][k];
-// }
-
-
-
+u32 IndiceONVecino(u32 j, u32 k, Grafo G){
+    assert(k < G->vertices[j]->grado);
+    return G->vecinos[G->vertices[j]->indiceVec + k]->b->posicion;
+}
