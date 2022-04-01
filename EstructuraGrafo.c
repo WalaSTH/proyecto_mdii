@@ -117,12 +117,16 @@ Grafo ConstruccionDelGrafo(){
     ver->indiceVec = 0u;
     G->vertices[0u] = ver;
     anterior = ver;
+    u32 mayorGrado = 1u;
 
     for(u32 i = 1u; i < G->m_lados * 2u; ++i){
         Vertice newVer = bigArray[i]->a;
         if(newVer->nombre == anterior->nombre){
             /* Es el mismo vertice */
             anterior->grado++;
+            if(mayorGrado < anterior->grado){
+                mayorGrado = anterior->grado;
+            }
         }else{
             /* Nuevo vertice -> lo agrego al array de orden natural*/
             ++ord;
@@ -133,12 +137,13 @@ Grafo ConstruccionDelGrafo(){
             G->vertices[ord] = newVer;
         }
     }
+    G->delta = mayorGrado;
 
-    // for (u32 i = 0; i < G->n_vertices; i++)
-    //     printf("Vértice %u.\tnombre = %u,\tgrado = %u,\tposición = %u,\tíndiceVec = %u\n",
-    //            i, G->vertices[i]->nombre, G->vertices[i]->grado,
-    //            G->vertices[i]->posicion, G->vertices[i]->indiceVec);
-    // printf("\n");
+    for (u32 i = 0; i < G->n_vertices; i++)
+        printf("Vértice %u.\tnombre = %u,\tgrado = %u,\tposición = %u,\tíndiceVec = %u\n",
+               i, G->vertices[i]->nombre, G->vertices[i]->grado,
+               G->vertices[i]->posicion, G->vertices[i]->indiceVec);
+    printf("\n");
     return G;
 }
 
