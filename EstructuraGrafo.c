@@ -1,5 +1,7 @@
 #include <stdbool.h>
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "EstructuraGrafo.h"
 #include "AniquilamientoPositronicoIonizanteGravitatorio.h"
 
@@ -7,9 +9,24 @@ u32 NombreVertice(Vertice x){
     return x->nombre;
 }
 
-static int cmp(static void *p1, static void *p2){
+/*
+    Función que compara dos lados.
+*/
+static int CompLadoP(const void *lado1, const void *lado2){
     int result = 0;
-    u32 p1a = *(Lado *)p1, p1b, p2b;
+    u32 nombre1a = (*(Lado *)lado1)->a->nombre;
+    u32 nombre1b = (*(Lado *)lado1)->b->nombre;
+    u32 nombre2a = (*(Lado *)lado2)->a->nombre;
+    u32 nombre2b = (*(Lado *)lado2)->b->nombre;
+
+    if (nombre1a < nombre2a ||
+       (nombre1a == nombre2a && nombre1b < nombre2b))
+        result = -1;
+    else if (nombre1a > nombre2a ||
+        (nombre1a == nombre2a && nombre1b > nombre2b))
+        result = 1;
+
+    return result;
 }
 
 Grafo ConstruccionDelGrafo(){
@@ -24,10 +41,9 @@ Grafo ConstruccionDelGrafo(){
         switch (input) {
         case 'p':
             fscanf(fp, "%*s %u %u\n", &G->n_vertices, &G->m_lados);
-            G->vertices = malloc(sizeof(struct VerticeSt)*(G->n_vertices));
-            G->vecinos = malloc(sizeof(struct LadoSt)*(G->m_lados)*2);
-            if (G->vertices == NULL || G->vecinos == NULL)
-                error = true;
+            G->vertices = malloc(sizeof(Vertice)*(G->n_vertices));
+            G->vecinos = malloc(sizeof(Lado)*(G->m_lados)*2);
+            error = G->vertices == NULL || G->vecinos == NULL;
             input = (char) fgetc(fp);
             break;
         case 'e':
@@ -56,7 +72,8 @@ Grafo ConstruccionDelGrafo(){
                 printf("(%u %u), (%u %u)\n",
                        G->vecinos[read]->a->nombre,
                        G->vecinos[read]->b->nombre,
-                       G->vecinos[read+1u]->a->nombre, G->vecinos[read+1u]->b->nombre);
+                       G->vecinos[read+1u]->a->nombre,
+                       G->vecinos[read+1u]->b->nombre);
 
                 // TODO: cargar info de c/lado
                 read = read + 2u;
@@ -78,67 +95,50 @@ Grafo ConstruccionDelGrafo(){
         free(G);
         return NULL;
     }
-    qsort(G->vecinos, G->m_lados*2, sizeof(ustruct LadoSt), cmp);
-    
-    // G->nameGrades = malloc(sizeof(u32)*G->n_vertices*2);
-    // G->vecinos = malloc(sizeof(u32)*G->n_vertices);
-    // if (read < G->m_lados && G->m_lados >= 2 &&
-    //     G->nameGrades!=NULL && G->vecinos!=NULL){
-    //     printf("Hubo un error al crear el grafo.\n");
-    //     free(G);
-    //     // TODO: Liberar toda la memoria reservada hasta ahora.
-    //     G = NULL;
-    //     return G;
-    // }
 
-    // G->n_vertices = nodes;
-    // G->m_lados = edges;
-    // assert(G->m_lados>=2 && G->nameGrades!=NULL && G->vecinos!=NULL);
+    // printf("\n");
+    qsort(G->vecinos, G->m_lados*2, sizeof(Lado), CompLadoP);
+    // for (u32 i = 0; i < G->m_lados*2; i++)
+    //     printf("(%u %u)\n",
+    //            G->vecinos[i]->a->nombre,
+    //            G->vecinos[i]->b->nombre);
+    // printf("\n");
 
-    // u32 x=0, y=0, jx=0, jy=0, vertCount = 0;
-    // for(size_t i=0; i < edges; ++i){
-    //     fscanf(fp, "%c %u %u\n", id, &x, &y);
-    //     if (strcmp(id, "e")!=0){
-    //         free(G->nameGrades);
-    //         free(G->vecinos);
-    //         free(G);
-    //         G = NULL;
-    //         return G;
-    //     }
 
-    //     // Forma de indezar nameGrades[ancho * fila + columna]
-    //     // Checkear que este antes en nameGrades
-    //     jx = getIndex(x, vertCount, G->nameGrades);
-    //     if (jx == vertCount) {
-    //         ++vertCount;
-    //         // G->vecinos[jx] = malloc(sizeof(u32)*nodes);
-    //         G->nameGrades[2*jx] = x;
-    //         G->nameGrades[2*jx+1] = 1;
-    //     } else if (jx < vertCount)
-    //         ++G->nameGrades[2*jx+1];
+    //TRABAJO ASUMIENDO G->vecinos ORDENADO "lexicográficamente"
+    //Ej big array = [(1,2), (1,12), (2,1), (2,3), (3,2), (12,1)]
+    Vertice ver, anterior;
+    Lado *bigArray = G->vecinos;
+    /* ord almacena el orden natural del vertice que estamos analizando */
+    u32 ord = 0u;
+    ver = bigArray[0u]->a;
+    ver->grado = 1u;
+    ver->posicion = 0u;
+    ver->indiceVec = 0u;
+    G->vertices[0u] = ver;
+    anterior = ver;
 
-    //     jy = getIndex(y, vertCount, G->nameGrades);
-    //     if (jy == vertCount) {
-    //         ++vertCount;
-    //         // G->vecinos[jy] = malloc(sizeof(u32)*nodes);  // FIXME esto rompe G->vecinos[0][0] en la iteracion 7
-    //         G->nameGrades[2*jy] = y;
-    //         G->nameGrades[2*jy+1] = 1;
-    //     } else if (jy < vertCount)
-    //         ++G->nameGrades[2*jy+1];
+    for(u32 i = 1u; i < G->m_lados * 2u; ++i){
+        Vertice newVer = bigArray[i]->a;
+        if(newVer->nombre == anterior->nombre){
+            /* Es el mismo vertice */
+            anterior->grado++;
+        }else{
+            /* Nuevo vertice -> lo agrego al array de orden natural*/
+            ++ord;
+            anterior = newVer;
+            newVer->grado = 1u;
+            newVer->posicion = ord;
+            newVer->indiceVec = i;
+            G->vertices[ord] = newVer;
+        }
+    }
 
-    //     // NOTE Hacer "bitmap" tipo hash es decir esta alocado n*n
-    //     // pero solamente esta ocupado los indices con nombre
-    //     // G->vecinos[jx][G->nameGrades[2*jx+1]-1] = y;
-    //     // G->vecinos[jy][G->nameGrades[2*jy+1]-1] = x;
-
-    // }
-
-    // fclose(fp);
-    // free(id);
-    // fp = NULL, id = NULL;
-    
-    //TRABAJO ASUMIENDO G->vecinos ORDENADO "lexicograficamente"
-
+    // for (u32 i = 0; i < G->n_vertices; i++)
+    //     printf("Vértice %u.\tnombre = %u,\tgrado = %u,\tposición = %u,\tíndiceVec = %u\n",
+    //            i, G->vertices[i]->nombre, G->vertices[i]->grado,
+    //            G->vertices[i]->posicion, G->vertices[i]->indiceVec);
+    // printf("\n");
     return G;
 }
 

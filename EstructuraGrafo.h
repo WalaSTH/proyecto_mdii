@@ -7,6 +7,8 @@ typedef uint32_t u32;
 struct VerticeSt {
     u32 nombre;
     u32 grado;
+    u32 posicion;
+    u32 indiceVec;
 };
 
 typedef struct VerticeSt VerticeSt;
