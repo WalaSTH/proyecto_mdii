@@ -3,3 +3,5 @@ main
 datos*
 test*
 .vscode
+*.txt
+ejemplos
