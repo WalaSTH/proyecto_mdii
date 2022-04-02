@@ -31,7 +31,7 @@ static int CompLadoP(const void *lado1, const void *lado2){
 
 Grafo ConstruccionDelGrafo(){
     Grafo G = malloc(sizeof(struct GrafoSt));
-    FILE *fp = fopen("./grafos/grafino.txt", "r");
+    FILE *fp = fopen("./ejemplos/muyGigante", "r");
     assert(G!=NULL && fp != NULL);
     bool error = false;
     u32 read = 0;
@@ -69,11 +69,11 @@ Grafo ConstruccionDelGrafo(){
                 /* meto los lados en el Big Array */
                 G->vecinos[read] = lado1;
                 G->vecinos[read+1u] = lado2;
-                printf("(%u %u), (%u %u)\n",
-                       G->vecinos[read]->a->nombre,
-                       G->vecinos[read]->b->nombre,
-                       G->vecinos[read+1u]->a->nombre,
-                       G->vecinos[read+1u]->b->nombre);
+                // printf("(%u %u), (%u %u)\n",
+                //        G->vecinos[read]->a->nombre,
+                //        G->vecinos[read]->b->nombre,
+                //        G->vecinos[read+1u]->a->nombre,
+                //        G->vecinos[read+1u]->b->nombre);
 
                 // TODO: cargar info de c/lado
                 read = read + 2u;
@@ -135,16 +135,16 @@ Grafo ConstruccionDelGrafo(){
     }
     G->delta = mayorGrado;
 
-    for (u32 i = 0; i < G->n_vertices; ++i)
-        printf("Vértice %u.\tnombre = %u,\tgrado = %u,\tposición = %u,\tíndiceVec = %u\n",
-               i, G->vertices[i]->nombre, G->vertices[i]->grado,
-               G->vertices[i]->posicion, G->vertices[i]->indiceVec);
-    printf("\n");
-    printf("Vecinos del vértice 1:");
-    for (u32 i = 0; i < G->vertices[0]->grado; ++i)
-        printf(" %u ", G->vecinos[G->vertices[0]->indiceVec + i]->b->nombre);
-    printf("\n");
-    printf("Delta= %u\n", G->delta);
+    // for (u32 i = 0; i < G->n_vertices; ++i)
+    //     printf("Vértice %u.\tnombre = %u,\tgrado = %u,\tposición = %u,\tíndiceVec = %u\n",
+    //            i, G->vertices[i]->nombre, G->vertices[i]->grado,
+    //            G->vertices[i]->posicion, G->vertices[i]->indiceVec);
+    // printf("\n");
+    // printf("Vecinos del vértice 1:");
+    // for (u32 i = 0; i < G->vertices[0]->grado; ++i)
+    //     printf(" %u ", G->vecinos[G->vertices[0]->indiceVec + i]->b->nombre);
+    // printf("\n");
+    // printf("Delta= %u\n", G->delta);
     return G;
 }
 
@@ -152,13 +152,13 @@ void DestruccionDelGrafo(Grafo G){
     assert(G!=NULL);
     Vertice ver_a = NULL, ver_b = NULL;
     Lado edge = NULL;
-    
+
     for (u32 i = 0; i < 2 * G->m_lados; ++i) {
         edge = G->vecinos[i];
         if(edge != NULL) {
-            ver_a = edge->a, ver_b = edge->b; 
+            ver_a = edge->a, ver_b = edge->b;
             if(ver_a != NULL) {
-                free(ver_a);
+                //free(ver_a); // FIXME: Double free
                 ver_a = NULL;
             }
             if(ver_b != NULL) {
@@ -170,7 +170,7 @@ void DestruccionDelGrafo(Grafo G){
         }
     }
     if (G->vecinos != NULL){
-        free(G->vecinos);   
+        free(G->vecinos);
         G->vecinos = NULL;
     }
     if (G->vertices != NULL){
@@ -181,26 +181,27 @@ void DestruccionDelGrafo(Grafo G){
     G = NULL;
 }
 
-// u32 NumeroDeVertices(Grafo G){
-//     return G->n_vertices;
-// }
+u32 NumeroDeVertices(Grafo G){
+    return G->n_vertices;
+}
 
-// u32 NumeroDeLados(Grafo G){
-//     return G->m_lados;
-// }
+u32 NumeroDeLados(Grafo G){
+    return G->m_lados;
+}
 
-// u32 Delta(Grafo G){
-//     return G->delta;
-// }
+u32 Delta(Grafo G){
+    return G->delta;
+}
 
-// u32 Nombre(u32 i,Grafo G){
-//     return G->nameGrades[2*i];
-// }
+u32 Nombre(u32 i,Grafo G){
+    return G->vertices[i]->nombre;
+}
 
-// u32 Grado(u32 i,Grafo G){
-//     return G->nameGrades[2*i+1];
-// }
+u32 Grado(u32 i,Grafo G){
+    return G->vertices[i]->grado;
+}
 
+// REVIEW: Needs testing
 u32 IndiceONVecino(u32 j, u32 k, Grafo G){
     assert(k < G->vertices[j]->grado);
     return G->vecinos[G->vertices[j]->indiceVec + k]->b->posicion;
