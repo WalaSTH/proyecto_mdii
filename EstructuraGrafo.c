@@ -50,30 +50,25 @@ Grafo ConstruccionDelGrafo(){
             if (read < G->m_lados*2) {
                 Vertice ver_a, ver_b;
                 Lado lado1, lado2;
-                /* aloco vertices */
+                /* Aloco vertices */
                 ver_a = malloc(sizeof(VerticeSt));
                 ver_b = malloc(sizeof(VerticeSt));
                 /* escaneamos los nombres */
                 fscanf(fp, "%u %u\n", &ver_a->nombre, &ver_b->nombre);
 
-                /* aloco lado */
+                /* Aloco lado */
                 lado1 = malloc(sizeof(LadoSt));
                 lado2 = malloc(sizeof(LadoSt));
 
-                /* meto los vertices en los lados */
+                /* Meto los vertices en los lados */
                 lado1->a = ver_a;
                 lado1->b = ver_b;
                 lado2->a = ver_b;
                 lado2->b = ver_a;
 
-                /* meto los lados en el Big Array */
+                /* Meto los lados en el Big Array */
                 G->vecinos[read] = lado1;
                 G->vecinos[read+1u] = lado2;
-                // printf("(%u %u), (%u %u)\n",
-                //        G->vecinos[read]->a->nombre,
-                //        G->vecinos[read]->b->nombre,
-                //        G->vecinos[read+1u]->a->nombre,
-                //        G->vecinos[read+1u]->b->nombre);
 
                 // TODO: cargar info de c/lado
                 read = read + 2u;
@@ -155,28 +150,18 @@ void DestruccionDelGrafo(Grafo G){
 
     for (u32 i = 0; i < 2 * G->m_lados; ++i) {
         edge = G->vecinos[i];
-        if(edge != NULL) {
-            ver_a = edge->a, ver_b = edge->b;
-            if(ver_a != NULL) {
-                //free(ver_a); // FIXME: Double free
-                ver_a = NULL;
-            }
-            if(ver_b != NULL) {
-                free(ver_b);
-                ver_b = NULL;
-            }
-            free(edge);
-            edge = NULL;
-        }
+        ver_a = edge->a, ver_b = edge->b;
+        // There will be NO mirror's edge problems (mirror's edge lol)
+        free(ver_a);
+        ver_a = NULL;
+        ver_b = NULL;
+        free(edge);
+        edge = NULL;
     }
-    if (G->vecinos != NULL){
-        free(G->vecinos);
-        G->vecinos = NULL;
-    }
-    if (G->vertices != NULL){
-        free(G->vertices);
-        G->vertices = NULL;
-    }
+    free(G->vecinos);
+    G->vecinos = NULL;
+    free(G->vertices);
+    G->vertices = NULL;
     free(G);
     G = NULL;
 }
