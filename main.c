@@ -15,8 +15,8 @@ int main() {
     //     }
     //     printf("\n");
     // }
-
     DestruccionDelGrafo(G);
+    G = NULL;
 
     // Grafo G = malloc(sizeof(struct GrafoSt));
     // char *id = malloc(sizeof(char)*2);

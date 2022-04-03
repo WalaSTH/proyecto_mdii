@@ -30,26 +30,32 @@ static int CompLadoP(const void *lado1, const void *lado2){
 }
 
 Grafo ConstruccionDelGrafo(){
-    Grafo G = malloc(sizeof(struct GrafoSt));
-    FILE *fp = fopen("./datos.txt", "r");
+    Grafo G = NULL;
+    G = malloc(sizeof(GrafoSt));
+    //FILE *fp = stdin;
+    FILE *fp = NULL;
+    fp = fopen("./ejemplos/malo.txt", "r");
     assert(G!=NULL && fp != NULL);
+    G->n_vertices = 0, G->m_lados = 0, G->delta = 0;
+    G->vecinos = NULL, G->vertices = NULL;
     bool error = false;
-    u32 read = 0;
+    u32 read = 0u;
 
     char input = (char) fgetc(fp);
     while (input != EOF && !error) {
         switch (input) {
         case 'p':
-            fscanf(fp, "%*s %u %u\n", &G->n_vertices, &G->m_lados);
+            fscanf(fp, "%*s %u %u\n", &(G->n_vertices), &(G->m_lados));
             G->vertices = malloc(sizeof(Vertice)*(G->n_vertices));
             G->vecinos = malloc(sizeof(Lado)*(G->m_lados)*2);
-            error = G->vertices == NULL || G->vecinos == NULL;
+            assert(G->vertices != NULL && G->vecinos != NULL);
+            error = error || G->n_vertices < 2 || G->m_lados < 1;
             input = (char) fgetc(fp);
             break;
         case 'e':
-            if (read < G->m_lados*2) {
-                Vertice ver_a, ver_b;
-                Lado lado1, lado2;
+            if (read < 2 * G->m_lados) {
+                Vertice ver_a = NULL, ver_b = NULL;
+                Lado lado1 = NULL, lado2 = NULL;
                 /* Aloco vertices */
                 ver_a = malloc(sizeof(VerticeSt));
                 ver_b = malloc(sizeof(VerticeSt));
@@ -81,9 +87,12 @@ Grafo ConstruccionDelGrafo(){
             break;
         }
     }
-
+    error = error || (read < 2*G->m_lados);
     if (error){
+        printf("ERROR: Hubo un problema al construir el grafo\n");
+        fclose(fp);
         DestruccionDelGrafo(G);
+        G = NULL;
         return NULL;
     }
 
@@ -145,25 +154,34 @@ Grafo ConstruccionDelGrafo(){
 }
 
 void DestruccionDelGrafo(Grafo G){
-    assert(G!=NULL);
-    Vertice ver_a = NULL;
-    Lado edge = NULL;
+    if(G!=NULL){
+        Vertice ver_a = NULL;
+        Lado edge = NULL;
+        if (G->vecinos != NULL){
+            for (u32 i = 0; i < 2 * G->m_lados; ++i) {
+                edge = G->vecinos[i];
+                if (edge != NULL) {
+                    ver_a = edge->a;
+                    if (ver_a != NULL) {
+                        // There will be NO mirror's edge problems (mirror's edge lol)
+                        free(ver_a);
+                        ver_a = NULL;
+                    }
+                    free(edge);
+                    edge = NULL;
+                }
+            }
+            free(G->vecinos);
+            G->vecinos = NULL;
+        }
 
-    for (u32 i = 0; i < 2 * G->m_lados; ++i) {
-        edge = G->vecinos[i];
-        ver_a = edge->a;
-        // There will be NO mirror's edge problems (mirror's edge lol)
-        free(ver_a);
-        ver_a = NULL;
-        free(edge);
-        edge = NULL;
+        if (G->vertices != NULL) {
+            free(G->vertices);
+            G->vertices = NULL;
+        }
+        free(G);
+        G = NULL;
     }
-    free(G->vecinos);
-    G->vecinos = NULL;
-    free(G->vertices);
-    G->vertices = NULL;
-    free(G);
-    G = NULL;
 }
 
 u32 NumeroDeVertices(Grafo G){
