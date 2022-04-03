@@ -31,7 +31,7 @@ static int CompLadoP(const void *lado1, const void *lado2){
 
 Grafo ConstruccionDelGrafo(){
     Grafo G = malloc(sizeof(struct GrafoSt));
-    FILE *fp = fopen("./ejemplos/muyGigante", "r");
+    FILE *fp = fopen("./datos.txt", "r");
     assert(G!=NULL && fp != NULL);
     bool error = false;
     u32 read = 0;
@@ -140,21 +140,21 @@ Grafo ConstruccionDelGrafo(){
     //     printf(" %u ", G->vecinos[G->vertices[0]->indiceVec + i]->b->nombre);
     // printf("\n");
     // printf("Delta= %u\n", G->delta);
+    fclose(fp);
     return G;
 }
 
 void DestruccionDelGrafo(Grafo G){
     assert(G!=NULL);
-    Vertice ver_a = NULL, ver_b = NULL;
+    Vertice ver_a = NULL;
     Lado edge = NULL;
 
     for (u32 i = 0; i < 2 * G->m_lados; ++i) {
         edge = G->vecinos[i];
-        ver_a = edge->a, ver_b = edge->b;
+        ver_a = edge->a;
         // There will be NO mirror's edge problems (mirror's edge lol)
         free(ver_a);
         ver_a = NULL;
-        ver_b = NULL;
         free(edge);
         edge = NULL;
     }
