@@ -34,7 +34,7 @@ Grafo ConstruccionDelGrafo(){
     G = malloc(sizeof(GrafoSt));
     //FILE *fp = stdin;
     FILE *fp = NULL;
-    fp = fopen("./ejemplos/malo.txt", "r");
+    fp = fopen("./grafos/school1.txt", "r");
     assert(G!=NULL && fp != NULL);
     G->n_vertices = 0, G->m_lados = 0, G->delta = 0;
     G->vecinos = NULL, G->vertices = NULL;
@@ -82,7 +82,10 @@ Grafo ConstruccionDelGrafo(){
             }
             break;
         default:
-            fscanf(fp, "%*[^\n]%*c");
+            // Ignoramos la línea entera y leemos el primer caracter
+            // de la siguiente
+            while (input != '\n')
+                input = (char) fgetc(fp);
             input = (char) fgetc(fp);
             break;
         }
@@ -148,7 +151,8 @@ Grafo ConstruccionDelGrafo(){
     // for (u32 i = 0; i < G->vertices[0]->grado; ++i)
     //     printf(" %u ", G->vecinos[G->vertices[0]->indiceVec + i]->b->nombre);
     // printf("\n");
-    // printf("Delta= %u\n", G->delta);
+    printf("Delta= %u\n", G->delta);
+
     fclose(fp);
     return G;
 }
