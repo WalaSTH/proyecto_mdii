@@ -1,7 +1,9 @@
 #ifndef __ESTRUCTURAGRAFO_H
 #define __ESTRUCTURAGRAFO_H
 #include <stdint.h>
+#include <limits.h>
 
+#define U32_MAX UINT_MAX
 typedef uint32_t u32;
 
 struct VerticeSt {
@@ -13,8 +15,6 @@ struct VerticeSt {
 
 typedef struct VerticeSt VerticeSt;
 typedef VerticeSt *Vertice;
-
-u32 NombreVertice(Vertice x);
 
 struct LadoSt {
     Vertice a;
@@ -28,8 +28,8 @@ struct GrafoSt {
     u32 n_vertices;
     u32 m_lados;
     u32 delta;
-    Vertice *vertices; /* Estarian en orden natural?  */
-    Lado *vecinos; /* Big array? */
+    Vertice *vertices;
+    Lado *vecinos;
 };
 
 typedef struct GrafoSt GrafoSt;

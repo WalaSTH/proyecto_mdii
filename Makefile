@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O3 -std=c99 -g
 CTEST = -Wall -Wextra -std=c99 -g -fsanitize=address,undefined -DNDEBUG
-SOURCES = EstructuraGrafo.c main.c
+SOURCES = Grafo.c main.c
 OBJECTS = $(SOURCES:.c=.o)
 TARGET = main
 
