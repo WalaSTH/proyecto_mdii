@@ -116,6 +116,7 @@ Grafo ConstruccionDelGrafo(){
         ver = G->vecinos[i]->a;
         if(ver->nombre == anterior->nombre){
             // Es el mismo vértice que el anterior
+            ver->posicion = ord;
             ++anterior->grado;
             if(mayorGrado < anterior->grado)
                 mayorGrado = anterior->grado;
@@ -130,17 +131,6 @@ Grafo ConstruccionDelGrafo(){
         }
     }
     G->delta = mayorGrado;
-
-    // for (u32 i = 0; i < G->n_vertices; ++i)
-    //     printf("Vértice %u.\tnombre = %u,\tgrado = %u,\tposición = %u,\tíndiceVec = %u\n",
-    //            i, G->vertices[i]->nombre, G->vertices[i]->grado,
-    //            G->vertices[i]->posicion, G->vertices[i]->indiceVec);
-    // printf("\n");
-    // printf("Vecinos del vértice 3:");
-    // for (u32 i = 0; i < G->vertices[2u]->grado; ++i)
-    //     printf(" %u ", G->vecinos[G->vertices[2u]->indiceVec + i]->b->nombre);
-    // printf("\n");
-    // printf("Delta= %u\n", G->delta);
     return G;
 }
 

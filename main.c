@@ -7,17 +7,25 @@
 
 int main() {
     Grafo G = ConstruccionDelGrafo();
+    u32 vertices=NumeroDeVertices(G), lados=NumeroDeLados(G),
+        delta=Delta(G);
 
-    // for (size_t i = 0; i<G->n_vertices; ++i){
-    //     printf("%u %u\n", G->nameGrades[2*i], G->nameGrades[2*i+1]);
-    //     for (size_t j = 0; j < G->nameGrades[2*i+1]; ++j){
-    //         printf("Vecino de %u numero %u es: %u \n", G->nameGrades[2*i], j, G->vecinos[i][j]);
-    //     }
-    //     printf("\n");
-    // }
+    printf("Grafo con %u vértices, %u lados, Delta %u\n",
+        vertices, lados, delta);
+
+    for (u32 i = 0; i < vertices; i++) {
+        printf("\n");
+        printf("===== Vértice %u =====\n", i);
+        printf("Nombre: %u\nGrado: %u\n", Nombre(i, G), Grado(i, G));
+        printf("Vecinos: (índice: nombre)\n");
+        for (u32 j = 0; j < Grado(i, G); j++) {
+            printf(" (%u: %u),", IndiceONVecino(j, i, G),
+                                   Nombre(IndiceONVecino(j, i, G), G));
+        }
+        printf("\n");
+    }
 
     DestruccionDelGrafo(G);
     G = NULL;
     return 0;
 }
-
