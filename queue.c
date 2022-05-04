@@ -51,13 +51,12 @@ queue queue_dequeue(queue q) {
         free(q);
         q = NULL;
     } else {
-        while(p->next != NULL){
+        while(p->next->next != NULL){
             p = p->next;
         }
-        free(p);
-        p = NULL;
+        free(p->next);
+        p->next = NULL;
     }
-    
     return q;
 }
 

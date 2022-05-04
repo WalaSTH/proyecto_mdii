@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "AniquilamientoPositronicoIonizanteGravitatorio.h"
+#include "AlduinPaarthurnaxIrileth.h"
 
 int main() {
     Grafo G = ConstruccionDelGrafo();
@@ -24,6 +25,12 @@ int main() {
         }
         printf("\n");
     }
+
+    u32 *coloreo = Bipartito(G);
+    if (coloreo == NULL)
+        printf("\nNo es bipartito\n");
+    else
+        printf("\nEs bipartito\n");
 
     DestruccionDelGrafo(G);
     G = NULL;
