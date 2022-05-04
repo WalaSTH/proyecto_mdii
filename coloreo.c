@@ -19,8 +19,6 @@ static bool BFSBipartito(Grafo G, u32 parent, u32 *coloreo){
                 coloreo[u] = 3-coloreo[parent];
             } else if(coloreo[u]==coloreo[parent]) {
                 q = queue_destroy(q);
-                free(coloreo);
-                coloreo = NULL;
                 return false;
             }
         }
@@ -46,41 +44,14 @@ u32 *Bipartito(Grafo G){
     while(bipartito && i<vertices){
         if(!coloreo[i]){
             bipartito = BFSBipartito(G, i, coloreo);
+            if(!bipartito) {
+                free(coloreo);
+                coloreo = NULL;
+                return coloreo;
+            };
         }
         ++i;
     }
-    // for(u32 j = 0; j<Grado(i, G); ++j){
-    //     if(!encolados[j]){
-
-    //     }
-    //     q = queue_enqueue(q, IndiceONVecino(i, j, G));
-    // }
-    // u32 *coloreo = NULL;
-    // coloreo = malloc(sizeof(u32) * n);
-    // // Initialize every color in 0
-    // for(u32 i = 0u; i<n; ++i){
-    //     coloreo[i] = 0;
-    // }
-    // // Do the actual coloring
-    // for(u32 i = 0u; i<n; ++i){
-    //     if(coloreo[i] == 0){
-    //         // FIXME No esta coloreado
-    //         coloreo[i] = 1;
-    //         estado = 1;
-    //     }else{
-    //         //Ya tiene color -> lo guardamos en estado
-    //         estado = coloreo[i];
-    //     }
-
-    //     u32 gradoVertice = Grado(i, G);
-    //     for(u32 j = 0u; j<gradoVertice; ++j){
-    //         u32 indiceVecino = IndiceONVecino(i, j, G);
-    //         u32 colorVecino = coloreo[indiceVecino];
-    //         if(colorVecino == 0){
-    //             coloreo[indiceVecino] = 3-estado; // si estado = 1 => 3-1 = 2, si estado = 2 => 3-2 = 1
-    //         }
-    //     }
-    // }
 
     return coloreo;
 }
