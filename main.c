@@ -27,30 +27,41 @@ int main() {
     //     printf("\n");
     // }
 
-    u32 *coloreo = Bipartito(G);
-
-    // Chequeamos que el grafo sea bipartitio.
-    if (coloreo == NULL) {
-        printf("No es bipartito\n");
-    } else {
-        printf("Es bipartito\n");
-
-        // Chequeamos que el coloreo sea propio.
-        bool propio = true;
-        for (u32 i = 0; i < vertices; ++i) {
-            for (u32 j = 0; j < Grado(i, G); ++j) {
-                if (coloreo[i] == coloreo[IndiceONVecino(j, i, G)]) {
-                    propio = false;
-                    break;
-                }
-            }
-            if (!propio) break;
-        }
-        propio ? printf("El coloreo es propio\n")
-               : printf("El coloreo no es propio\n");
+    // u32 *coloreo = Bipartito(G);
+    u32 *Coloreo = malloc(vertices * sizeof(u32));
+    u32 *Orden = malloc(vertices * sizeof(u32));
+    for (u32 i = 0; i < vertices; i++) {
+        Orden[i] = i;
     }
+
+    u32 colores = Greedy(G, Orden, Coloreo);
+    printf("Greedy en orden natural: %u colores\n", colores);
+
+
+    // // Chequeamos que el grafo sea bipartitio.
+    // if (coloreo == NULL) {
+    //     printf("No es bipartito\n");
+    // } else {
+    //     printf("Es bipartito\n");
+
+    //     // Chequeamos que el coloreo sea propio.
+    //     bool propio = true;
+    //     for (u32 i = 0; i < vertices; ++i) {
+    //         for (u32 j = 0; j < Grado(i, G); ++j) {
+    //             if (coloreo[i] == coloreo[IndiceONVecino(j, i, G)]) {
+    //                 propio = false;
+    //                 break;
+    //             }
+    //         }
+    //         if (!propio) break;
+    //     }
+    //     propio ? printf("El coloreo es propio\n")
+    //            : printf("El coloreo no es propio\n");
+    // }
 
     DestruccionDelGrafo(G);
     G = NULL;
+    free(Orden);
+    free(Coloreo);
     return 0;
 }
