@@ -3,7 +3,10 @@
 #include <stdint.h>
 #include <limits.h>
 
+#ifndef U32_MAX
 #define U32_MAX UINT_MAX
+#endif
+
 typedef uint32_t u32;
 
 struct VerticeSt {
