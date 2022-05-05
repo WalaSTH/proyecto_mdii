@@ -4,6 +4,10 @@
 #include "queue.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
+
+
+/* Funciones de coloreo */
 
 static bool BFSBipartito(Grafo G, u32 parent, u32 *coloreo){
     queue q = queue_empty();
@@ -29,11 +33,6 @@ static bool BFSBipartito(Grafo G, u32 parent, u32 *coloreo){
     return true;
 }
 
-/* Si χ(G) ≤ 2, (y como todos nuestros grafos tienen al menos un lado, χ(G) ≤ 2 es equivalente a χ(G) = 2) devuelve un
-puntero a un array de u32s que debe tener longitud n = n ́umero de v ́ertices de G, y ser un coloreo propio de G con los colores
-1 y 2, con la entrada i del array diciendo que color tiene el v ́ertice cuyo  ́ındice es i en el Orden Natural. La reserva de memoria
-para ese array debe ser hecha dentro de Bipartito, obviamente.
-Si χ(G) ≥ 3, devuelve un puntero a NULL. */
 u32 *Bipartito(Grafo G){
     u32 vertices = NumeroDeVertices(G);
     u32 *coloreo = calloc(vertices, sizeof(u32));
@@ -58,8 +57,20 @@ u32 *Bipartito(Grafo G){
 // Salve principe Sheogorath
 u32 Greedy(Grafo G, u32 *Orden, u32 *Coloreo){
     u32 nVertices=NumeroDeVertices(G), delta=Delta(G);
-    bool *vertFueColoreado = calloc(nVertices, sizeof(bool)),
-         *colorFueUsado = malloc((delta + 1) * sizeof(bool));
+    bool *vertFueColoreado=NULL, *colorFueUsado=NULL;
+
+    vertFueColoreado = malloc(nVertices * sizeof(bool));
+    if (vertFueColoreado == NULL) {
+        return U32_MAX;
+    }
+
+    colorFueUsado = malloc((delta + 1) * sizeof(bool));
+    if (colorFueUsado == NULL) {
+        free(vertFueColoreado);
+        vertFueColoreado = NULL;
+        return U32_MAX;
+    }
+    memset(vertFueColoreado, 0, nVertices * sizeof(bool));
 
     // Coloreamos el primer vértice
     u32 maxColor = 0;
@@ -72,9 +83,7 @@ u32 Greedy(Grafo G, u32 *Orden, u32 *Coloreo){
         u32 grado = Grado(vertActual, G);
 
         // Inicializamos el array de colores usados
-        for (u32 k = 0; k < delta + 1; ++k) {
-            colorFueUsado[k] = false;
-        }
+        memset(colorFueUsado, 0, (maxColor + 1) * sizeof(bool));
 
         // Chequeamos los colores de cada vecino y actualizamos
         // el array de colores usados
