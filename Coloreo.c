@@ -57,20 +57,20 @@ u32 *Bipartito(Grafo G){
 // Salve principe Sheogorath
 u32 Greedy(Grafo G, u32 *Orden, u32 *Coloreo){
     u32 nVertices=NumeroDeVertices(G), delta=Delta(G);
-    bool *vertFueColoreado=NULL, *colorFueUsado=NULL;
+    bool *vertFueColoreado = NULL;
+    u32 *colorFueUsado = NULL;
 
-    vertFueColoreado = malloc(nVertices * sizeof(bool));
+    vertFueColoreado = calloc(nVertices, sizeof(bool));
     if (vertFueColoreado == NULL) {
         return U32_MAX;
     }
 
-    colorFueUsado = malloc((delta + 1) * sizeof(bool));
+    colorFueUsado = calloc((delta + 1), sizeof(u32));
     if (colorFueUsado == NULL) {
         free(vertFueColoreado);
         vertFueColoreado = NULL;
         return U32_MAX;
     }
-    memset(vertFueColoreado, 0, nVertices * sizeof(bool));
 
     // Coloreamos el primer vértice
     u32 maxColor = 0;
@@ -82,21 +82,18 @@ u32 Greedy(Grafo G, u32 *Orden, u32 *Coloreo){
         vertActual = Orden[i];
         u32 grado = Grado(vertActual, G);
 
-        // Inicializamos el array de colores usados
-        memset(colorFueUsado, 0, (maxColor + 1) * sizeof(bool));
-
         // Chequeamos los colores de cada vecino y actualizamos
         // el array de colores usados
         for(u32 j = 0; j < grado; ++j){
             u32 jVecino = IndiceONVecino(j, vertActual, G);
             if(vertFueColoreado[jVecino]){
-                colorFueUsado[Coloreo[jVecino]] = true;
+                colorFueUsado[Coloreo[jVecino]] = i;
             }
         }
 
         // Buscamos el menor color que no haya sido usado
         u32 color = 0;
-        while(colorFueUsado[color] && color < maxColor + 1){
+        while (colorFueUsado[color] == i && color < maxColor+1) {
             ++color;
         }
 
@@ -112,6 +109,8 @@ u32 Greedy(Grafo G, u32 *Orden, u32 *Coloreo){
 
     free(vertFueColoreado);
     vertFueColoreado = NULL;
+    free(colorFueUsado);
+    colorFueUsado = NULL;
 
     return maxColor + 1;
 }
