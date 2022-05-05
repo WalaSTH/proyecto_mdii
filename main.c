@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 #include "AniquilamientoPositronicoIonizanteGravitatorio.h"
 #include "AlduinPaarthurnaxIrileth.h"
 
@@ -28,14 +29,19 @@ int main() {
     // }
 
     // u32 *coloreo = Bipartito(G);
+
     u32 *Coloreo = malloc(vertices * sizeof(u32));
     u32 *Orden = malloc(vertices * sizeof(u32));
     for (u32 i = 0; i < vertices; i++) {
         Orden[i] = i;
     }
+    u32 colores = 0;
 
-    u32 colores = Greedy(G, Orden, Coloreo);
-    printf("Greedy en orden natural: %u colores\n", colores);
+    clock_t start = clock();
+    colores = Greedy(G, Orden, Coloreo);
+    clock_t end = clock();
+    printf("Tiempo de Greedy: %f segundos\n",
+           (double)(end - start) / CLOCKS_PER_SEC);
 
 
     // // Chequeamos que el grafo sea bipartitio.
