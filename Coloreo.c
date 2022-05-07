@@ -1,6 +1,7 @@
 #include "AniquilamientoPositronicoIonizanteGravitatorio.h"
 #include "AlduinPaarthurnaxIrileth.h"
 #include "EstructuraGrafo.h"
+#include "sort_r.h"
 #include "queue.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -115,7 +116,19 @@ u32 Greedy(Grafo G, u32 *Orden, u32 *Coloreo){
     return maxColor + 1;
 }
 
-// Ordenamiento a partir de clave
+static int CmpKeys(const u32 x, const u32 y, u32 *Keys) {
+    return (Keys[y] - Keys[x]);
+}
+
+static int CmpKeysP(const void *x, const void *y, void *Keys) {
+    return CmpKeys(*(const u32*)x, (*(const u32*)y), (u32 *) Keys);
+}
+
+/* Función para crear un orden a partir de claves */
+
 char OrdenFromKey(u32 n,u32* key,u32* Orden){
-    return (char) 0;
+    for(u32 i=0; i<n+1; ++i)
+        Orden[i] = i;
+    qsort_r(Orden, n+1, sizeof(u32), CmpKeysP, key);
+    return (char)0;
 }

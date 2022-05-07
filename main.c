@@ -9,29 +9,53 @@
 #include "AlduinPaarthurnaxIrileth.h"
 
 int main() {
-    Grafo g = NULL;
-    g = ConstruccionDelGrafo();
-    u32 delta = Delta(g);
+    // Grafo g = NULL;
+    // g = ConstruccionDelGrafo();
+    // u32 delta = Delta(g);
 
-    u32 *coloreo = calloc(NumeroDeVertices(g), sizeof(u32));
+    // u32 *coloreo = calloc(NumeroDeVertices(g), sizeof(u32));
 
-    u32 *orden = calloc(NumeroDeVertices(g), sizeof(u32));
-    for (size_t i = 0; i < NumeroDeVertices(g); ++i) {
-        orden[i] = i;
+    // u32 *orden = calloc(NumeroDeVertices(g), sizeof(u32));
+    // for (size_t i = 0; i < NumeroDeVertices(g); ++i) {
+    //     orden[i] = i;
+    // }
+
+    // clock_t t;
+    // t = clock();
+
+    // u32 nroColores = Greedy(g, orden, coloreo);
+
+    // t = clock() - t;
+    // double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+
+    // printf("Cantidad colores: %u, time: %f, delta: %u\n", nroColores, time_taken, delta);
+    // //Cantidad colores: 600, time: 2.173000
+    // DestruccionDelGrafo(g);
+    // g = NULL;
+
+
+    // test OrdernFromKey
+    u32 *Key=NULL, *Orden=NULL;
+    Key = malloc(4 * sizeof(u32));
+    Orden = malloc(4 * sizeof(u32));
+    Key[0] = 2; 
+    Key[1] = 3;
+    Key[2] = 0;
+    Key[3] = 1;
+    char ordenado = OrdenFromKey(3, Key, Orden);
+    if (!ordenado) {
+        for(int i = 0; i < 4;++i){
+            printf("%u", Orden[i]);
+        }
+        printf("\n");
     }
+    free(Key);
+    Key = NULL;
+    free(Orden);
+    Orden = NULL;
 
-    clock_t t;
-    t = clock();
 
-    u32 nroColores = Greedy(g, orden, coloreo);
 
-    t = clock() - t;
-    double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-
-    printf("Cantidad colores: %u, time: %f, delta: %u\n", nroColores, time_taken, delta);
-    //Cantidad colores: 600, time: 2.173000
-    DestruccionDelGrafo(g);
-    g = NULL;
     return 0;
     // Grafo G = ConstruccionDelGrafo();
     // u32 vertices=NumeroDeVertices(G), lados=NumeroDeLados(G),
