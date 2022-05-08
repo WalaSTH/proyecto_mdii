@@ -2,7 +2,7 @@
 #include "AlduinPaarthurnaxIrileth.h"
 #include "EstructuraGrafo.h"
 #include "sort_r.h"
-#include "queue.h"
+#include "Queue.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,26 +11,26 @@
 /* Funciones de coloreo */
 
 static bool BFSBipartito(Grafo G, u32 parent, u32 *coloreo){
-    queue q = queue_empty();
-    q = queue_enqueue(q, parent);
+    Queue q = QueueEmpty();
+    q = QueueEnqueue(q, parent);
     coloreo[parent] = 1;
 
-    while(!queue_is_empty(q)){
-        parent = queue_first(q);
+    while(!QueueIsEmpty(q)){
+        parent = QueueFirst(q);
         for(u32 j = 0; j<Grado(parent, G); ++j){
             u32 u = IndiceONVecino(j, parent, G);
             if(!coloreo[u]){
-                q = queue_enqueue(q, u);
+                q = QueueEnqueue(q, u);
                 coloreo[u] = 3-coloreo[parent];
             } else if(coloreo[u]==coloreo[parent]) {
-                q = queue_destroy(q);
+                q = QueueDestroy(q);
                 return false;
             }
         }
-        q = queue_dequeue(q);
+        q = QueueDequeue(q);
     }
 
-    q = queue_destroy(q);
+    q = QueueDestroy(q);
     return true;
 }
 
@@ -116,12 +116,14 @@ u32 Greedy(Grafo G, u32 *Orden, u32 *Coloreo){
     return maxColor + 1;
 }
 
-static int CmpKeys(const u32 x, const u32 y, u32 *Keys) {
-    return (Keys[y] - Keys[x]);
+/* Funciones auxiliares para comparar claves según sus índices */
+
+static int CmpKeys(const u32 x, const u32 y, u32 *key) {
+    return (key[y] - key[x]);
 }
 
-static int CmpKeysP(const void *x, const void *y, void *Keys) {
-    return CmpKeys(*(const u32*)x, (*(const u32*)y), (u32 *) Keys);
+static int CmpKeysP(const void *x, const void *y, void *key) {
+    return CmpKeys(*(const u32*)x, (*(const u32*)y), (u32 *) key);
 }
 
 /* Función para crear un orden a partir de claves */

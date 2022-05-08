@@ -5,6 +5,7 @@
 #include "EstructuraGrafo.h"
 #include "AniquilamientoPositronicoIonizanteGravitatorio.h"
 
+
 /* Función auxiliar para comparar dos lados lexicográficamente */
 
 static int CompLadoP(const void *lado1, const void *lado2){

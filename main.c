@@ -8,114 +8,126 @@
 #include "AniquilamientoPositronicoIonizanteGravitatorio.h"
 #include "AlduinPaarthurnaxIrileth.h"
 
-int main() {
-    // Grafo g = NULL;
-    // g = ConstruccionDelGrafo();
-    // u32 delta = Delta(g);
 
-    // u32 *coloreo = calloc(NumeroDeVertices(g), sizeof(u32));
+static void dumpGrafo(Grafo G) {
+    u32 nroVertices = NumeroDeVertices(G);
+    u32 nroLados = NumeroDeLados(G);
+    u32 delta = Delta(G);
 
-    // u32 *orden = calloc(NumeroDeVertices(g), sizeof(u32));
-    // for (size_t i = 0; i < NumeroDeVertices(g); ++i) {
-    //     orden[i] = i;
-    // }
+    printf("Grafo con %u vértices, %u lados, delta %u\n",
+        nroVertices, nroLados, delta);
 
-    // clock_t t;
-    // t = clock();
-
-    // u32 nroColores = Greedy(g, orden, coloreo);
-
-    // t = clock() - t;
-    // double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-
-    // printf("Cantidad colores: %u, time: %f, delta: %u\n", nroColores, time_taken, delta);
-    // //Cantidad colores: 600, time: 2.173000
-    // DestruccionDelGrafo(g);
-    // g = NULL;
-
-
-    // test OrdernFromKey
-    u32 *Key=NULL, *Orden=NULL;
-    Key = malloc(4 * sizeof(u32));
-    Orden = malloc(4 * sizeof(u32));
-    Key[0] = 2; 
-    Key[1] = 3;
-    Key[2] = 0;
-    Key[3] = 1;
-    char ordenado = OrdenFromKey(3, Key, Orden);
-    if (!ordenado) {
-        for(int i = 0; i < 4;++i){
-            printf("%u", Orden[i]);
+    for (u32 i = 0; i < nroVertices; i++) {
+        printf("\n===== Vértice %u =====\n", i);
+        printf("Nombre: %u\nGrado: %u\n", Nombre(i, G), Grado(i, G));
+        printf("Vecinos: (índice: nombre)\n");
+        for (u32 j = 0; j < Grado(i, G); j++) {
+            u32 indVecino = IndiceONVecino(j, i, G);
+            printf(" (%u: %u) ", indVecino, Nombre(indVecino, G));
         }
         printf("\n");
     }
+}
+
+static bool ColoreoEsPropio(u32 *Coloreo, Grafo G) {
+    bool esPropio = true;
+    u32 nroVertices=NumeroDeVertices(G), x=0;
+    while (esPropio && x < nroVertices) {
+        u32 grado=Grado(x, G), y=0;
+        while (esPropio && y < grado) {
+            esPropio = Coloreo[x] != Coloreo[IndiceONVecino(y, x, G)];
+            ++y;
+        }
+        ++x;
+    }
+    return esPropio;
+}
+
+static void testBipartito(Grafo G) {
+    u32 *Coloreo = Bipartito(G);
+
+    // Chequeamos que el grafo sea bipartitio.
+    if (!Coloreo) {
+        printf("No es bipartito\n");
+    } else {
+        printf("Es bipartito\n");
+
+        // Chequeamos que el coloreo sea propio.
+        if (ColoreoEsPropio(Coloreo, G)) {
+            printf("El coloreo es propio\n");
+        } else {
+            printf("El coloreo no es propio\n");
+        }
+    }
+
+    free(Coloreo);
+    Coloreo = NULL;
+}
+
+static void testGreedy(Grafo G) {
+    u32 nroVertices = NumeroDeVertices(G);
+    u32 *Coloreo=NULL, *Orden=NULL;
+    Coloreo = calloc(nroVertices, sizeof(u32));
+    Orden   = calloc(nroVertices, sizeof(u32));
+
+    for (u32 i = 0; i < nroVertices; ++i) {
+        Orden[i] = i;
+    }
+
+    clock_t t = clock();
+    u32 nroColores = Greedy(G, Orden, Coloreo);
+    t = clock() - t;
+    double timeTaken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+
+    printf("Greedy en orden natural: %u colores en %f segundos\n",
+            nroColores, timeTaken);
+
+    if (ColoreoEsPropio(Coloreo, G)) {
+        printf("El coloreo es propio\n");
+    } else {
+        printf("El coloreo no es propio\n");
+    }
+
+    free(Coloreo);
+    Coloreo = NULL;
+    free(Orden);
+    Orden = NULL;
+}
+
+void testOrdenFromKey(void) {
+    u32 rango = 3;
+    u32 *Key=NULL, *Orden=NULL;
+    Orden = calloc(rango+1, sizeof(u32));
+    Key   = calloc(rango+1, sizeof(u32));
+    Key[0] = 2;
+    Key[1] = 3;
+    Key[2] = 0;
+    Key[3] = 1;
+
+    char ordenado = OrdenFromKey(rango, Key, Orden);
+    if (!ordenado) {
+        for(u32 i = 0; i < rango+1; ++i){
+            printf("%u ", Orden[i]);
+        }
+        printf("\n");
+    }
+
     free(Key);
     Key = NULL;
     free(Orden);
     Orden = NULL;
+}
 
+int main() {
+    Grafo G = ConstruccionDelGrafo();
+    // dumpGrafo(G);
 
+    // testBipartito(G);
+    // testGreedy(G);
 
+    // testOrdenFromKey();
+
+    DestruccionDelGrafo(G);
+    G = NULL;
     return 0;
-    // Grafo G = ConstruccionDelGrafo();
-    // u32 vertices=NumeroDeVertices(G), lados=NumeroDeLados(G),
-    //     delta=Delta(G);
-
-    // // printf("Grafo con %u vértices, %u lados, Delta %u\n",
-    // //     vertices, lados, delta);
-
-    // // for (u32 i = 0; i < vertices; i++) {
-    // //     printf("\n");
-    // //     printf("===== Vértice %u =====\n", i);
-    // //     printf("Nombre: %u\nGrado: %u\n", Nombre(i, G), Grado(i, G));
-    // //     printf("Vecinos: (índice: nombre)\n");
-    // //     for (u32 j = 0; j < Grado(i, G); j++) {
-    // //         printf(" (%u: %u),", IndiceONVecino(j, i, G),
-    // //                                Nombre(IndiceONVecino(j, i, G), G));
-    // //     }
-    // //     printf("\n");
-    // // }
-
-    // // u32 *coloreo = Bipartito(G);
-
-    // u32 *Coloreo = malloc(vertices * sizeof(u32));
-    // u32 *Orden = malloc(vertices * sizeof(u32));
-    // for (u32 i = 0; i < vertices; i++) {
-    //     Orden[i] = i;
-    // }
-    // u32 colores = 0;
-
-    // clock_t start = clock();
-    // colores = Greedy(G, Orden, Coloreo);
-    // clock_t end = clock();
-    // printf("Tiempo de Greedy: %f segundos\n",
-    //        (double)(end - start) / CLOCKS_PER_SEC);
-
-
-    // // // Chequeamos que el grafo sea bipartitio.
-    // // if (coloreo == NULL) {
-    // //     printf("No es bipartito\n");
-    // // } else {
-    // //     printf("Es bipartito\n");
-
-    // //     // Chequeamos que el coloreo sea propio.
-    // //     bool propio = true;
-    // //     for (u32 i = 0; i < vertices; ++i) {
-    // //         for (u32 j = 0; j < Grado(i, G); ++j) {
-    // //             if (coloreo[i] == coloreo[IndiceONVecino(j, i, G)]) {
-    // //                 propio = false;
-    // //                 break;
-    // //             }
-    // //         }
-    // //         if (!propio) break;
-    // //     }
-    // //     propio ? printf("El coloreo es propio\n")
-    // //            : printf("El coloreo no es propio\n");
-    // // }
-
-    // DestruccionDelGrafo(G);
-    // G = NULL;
-    // free(Orden);
-    // free(Coloreo);
-    // return 0;
 }
