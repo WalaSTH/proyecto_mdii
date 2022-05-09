@@ -131,6 +131,6 @@ static int CmpKeysP(const void *x, const void *y, void *key) {
 char OrdenFromKey(u32 n,u32* key,u32* Orden){
     for(u32 i=0; i<n+1; ++i)
         Orden[i] = i;
-    qsort_r(Orden, n+1, sizeof(u32), CmpKeysP, key);
+    sort_r(Orden, n+1, sizeof(u32), CmpKeysP, key);
     return (char)0;
 }

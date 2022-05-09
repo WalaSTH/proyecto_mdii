@@ -31,14 +31,11 @@ static void dumpGrafo(Grafo G) {
 
 static bool ColoreoEsPropio(u32 *Coloreo, Grafo G) {
     bool esPropio = true;
-    u32 nroVertices=NumeroDeVertices(G), x=0;
-    while (esPropio && x < nroVertices) {
-        u32 grado=Grado(x, G), y=0;
-        while (esPropio && y < grado) {
+    u32 nroVertices = NumeroDeVertices(G);
+    for (u32 x = 0; x < nroVertices && esPropio; ++x) {
+        for (u32 y = 0; y < Grado(x, G) && esPropio; ++y) {
             esPropio = Coloreo[x] != Coloreo[IndiceONVecino(y, x, G)];
-            ++y;
         }
-        ++x;
     }
     return esPropio;
 }
@@ -125,7 +122,7 @@ int main() {
     // testBipartito(G);
     // testGreedy(G);
 
-    // testOrdenFromKey();
+    testOrdenFromKey();
 
     DestruccionDelGrafo(G);
     G = NULL;
