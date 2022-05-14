@@ -1,10 +1,6 @@
 #ifndef __ESTRUCTURAGRAFO_H
 #define __ESTRUCTURAGRAFO_H
-#include <stdint.h>
-#include <limits.h>
-
-#define U32_MAX UINT_MAX
-typedef uint32_t u32;
+#include "u32.h"
 
 struct VerticeSt {
     u32 nombre;
