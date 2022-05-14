@@ -1,11 +1,5 @@
 #ifndef __API_H
 #define __API_H
-#include <limits.h>
-
-#ifndef U32_MAX
-#define U32_MAX UINT_MAX
-#endif
-
 
 #include "AniquilamientoPositronicoIonizanteGravitatorio.h"
 

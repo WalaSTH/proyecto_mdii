@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
-#include "EstructuraGrafo.h"
+#include "u32.h"
 #include "Queue.h"
 
 

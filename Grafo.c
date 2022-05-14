@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "EstructuraGrafo.h"
+#include "u32.h"
 #include "AniquilamientoPositronicoIonizanteGravitatorio.h"
 
 

@@ -1,11 +1,11 @@
-#include "AniquilamientoPositronicoIonizanteGravitatorio.h"
-#include "AlduinPaarthurnaxIrileth.h"
-#include "EstructuraGrafo.h"
-#include "sort_r.h"
-#include "Queue.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include "u32.h"
+#include "Queue.h"
+#include "sort_r.h"
+#include "AniquilamientoPositronicoIonizanteGravitatorio.h"
+#include "AlduinPaarthurnaxIrileth.h"
 
 
 /* Funciones de coloreo */
@@ -13,7 +13,7 @@
 static bool BFSBipartito(Grafo G, u32 parent, u32 *coloreo){
     Queue q = QueueEmpty();
     q = QueueEnqueue(q, parent);
-    coloreo[parent] = 1;
+    coloreo[parent] = 1u;
 
     while(!QueueIsEmpty(q)){
         parent = QueueFirst(q);
@@ -117,8 +117,8 @@ u32 Greedy(Grafo G, u32 *Orden, u32 *Coloreo){
     }
 
     free(vertFueColoreado);
-    vertFueColoreado = NULL;
     free(colorFueUsado);
+    vertFueColoreado = NULL;
     colorFueUsado = NULL;
 
     return maxColor + 1;
@@ -131,29 +131,29 @@ static int CmpKeys(const u32 x, const u32 y, u32 *key) {
 }
 
 static int CmpKeysP(const void *x, const void *y, void *key) {
-    return CmpKeys(*(const u32*)x, (*(const u32*)y), (u32 *) key);
+    return CmpKeys(*(const u32*)x, (*(const u32*)y), (u32*)key);
 }
 
 /* Función para crear un orden a partir de claves */
 
 char OrdenFromKey(u32 n,u32* key,u32* Orden){
-    for(u32 i=0; i<n+1; ++i)
+    for(u32 i=0; i<n; ++i)
         Orden[i] = i;
-    sort_r(Orden, n+1, sizeof(u32), CmpKeysP, key);
+    sort_r(Orden, n, sizeof(u32), CmpKeysP, key);
     return (char)0;
 }
 
 /* Funciones para crear claves específicas */
 
 void AleatorizarKeys(u32 n, u32 R, u32 *key){
+    srand(R);
     for(u32 i=0; i<n; ++i){
-        key[i] = pseudoRandom(R, i) % n;
+        key[i] = rand() % n;
     }
 }
 
 u32 *PermutarColores(u32 n, u32 *Coloreo, u32 R){
     u32 *newColors = malloc(sizeof(u32) * n);
-    u32 temp, rand;
     if (NULL == newColors) {
         return NULL;
     }
@@ -178,12 +178,12 @@ u32 *PermutarColores(u32 n, u32 *Coloreo, u32 R){
     }
 
     // Permutamos los lugares de cada color
-    temp = 0;
+    srand(R);
     for(u32 i=0; i < maxColor+1; ++i){
-        rand = pseudoRandom(R, i) % (maxColor+1);
-        temp = PermC[i];
-        PermC[i] = PermC[rand];
-        PermC[rand] = temp;
+        u32 random = rand() % (maxColor+1);
+        u32 temp = PermC[i];
+        PermC[i] = PermC[random];
+        PermC[random] = temp;
     }
 
     // Asignamos el nuevo coloreo
@@ -238,8 +238,8 @@ u32 *RecoloreoCardinalidadDecrecienteBC(u32 n, u32 *Coloreo) {
     }
 
     // Obtenemos el nuevo nombre de cada color
-    char c = OrdenFromKey(maxColor, CardC, OrdC);
-    if (c) {
+    char OFKStatus = OrdenFromKey(maxColor + 1, CardC, OrdC);
+    if (OFKStatus) {
         // caso de error
         free(CardC);
         free(OrdC);
@@ -251,28 +251,17 @@ u32 *RecoloreoCardinalidadDecrecienteBC(u32 n, u32 *Coloreo) {
     }
 
     // Que Bueno Estaria tener este array...
-    u32 *QBE = malloc((maxColor+1) * sizeof(u32));
-    if (NULL == QBE) {
-        // caso de error
-        free(CardC);
-        free(OrdC);
-        free(newColors);
-        CardC = NULL;
-        OrdC = NULL;
-        newColors = NULL;
-        return NULL;
-    }
-
-    for(int i = 0; i < maxColor+1; ++i){
+    u32 *QBE = CardC;
+    for(u32 i = 0; i < maxColor+1; ++i){
         QBE[OrdC[i]] = i;
     }
+
     // Renombramos cada color
     for(u32 i = 0; i < n; ++i)
         newColors[i] = QBE[Coloreo[i]];
 
     free(CardC);
     free(OrdC);
-    free(QBE);
     CardC = NULL;
     OrdC = NULL;
     QBE = NULL;
