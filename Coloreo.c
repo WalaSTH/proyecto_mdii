@@ -34,6 +34,14 @@ static bool BFSBipartito(Grafo G, u32 parent, u32 *coloreo){
     return true;
 }
 
+static u32 pseudoRandom(u32 R, u32 i) {
+    R = R<<10;
+    R = R+123;
+    R = R*50;
+    R *= (R + i + 1);
+    return R;
+}
+
 u32 *Bipartito(Grafo G){
     u32 vertices = NumeroDeVertices(G);
     u32 *coloreo = calloc(vertices, sizeof(u32));
@@ -133,4 +141,141 @@ char OrdenFromKey(u32 n,u32* key,u32* Orden){
         Orden[i] = i;
     sort_r(Orden, n+1, sizeof(u32), CmpKeysP, key);
     return (char)0;
+}
+
+/* Funciones para crear claves específicas */
+
+void AleatorizarKeys(u32 n, u32 R, u32 *key){
+    for(u32 i=0; i<n; ++i){
+        key[i] = pseudoRandom(R, i) % n;
+    }
+}
+
+u32 *PermutarColores(u32 n, u32 *Coloreo, u32 R){
+    u32 *newColors = malloc(sizeof(u32) * n);
+    u32 temp, rand;
+    if (NULL == newColors) {
+        return NULL;
+    }
+
+    // Obtenemos el máximo color usado
+    u32 maxColor = Coloreo[0];
+    for(u32 i=0; i<n; ++i){
+        if(Coloreo[i]>maxColor){
+            maxColor = Coloreo[i];
+        }
+    }
+
+    // Inicializamos el arreglo de colores
+    u32 *PermC = malloc(sizeof(u32) * (maxColor+1));
+    if (NULL == PermC) {
+        free(newColors);
+        newColors = NULL;
+        return NULL;
+    }
+    for(u32 i=0; i<maxColor+1; ++i){
+        PermC[i] = i;
+    }
+
+    // Permutamos los lugares de cada color
+    temp = 0;
+    for(u32 i=0; i < maxColor+1; ++i){
+        rand = pseudoRandom(R, i) % (maxColor+1);
+        temp = PermC[i];
+        PermC[i] = PermC[rand];
+        PermC[rand] = temp;
+    }
+
+    // Asignamos el nuevo coloreo
+    for(u32 i=0; i<n; ++i){
+        newColors[i] = PermC[Coloreo[i]];
+    }
+
+    free(PermC);
+    PermC = NULL;
+
+    return newColors;
+}
+
+
+u32 *RecoloreoCardinalidadDecrecienteBC(u32 n, u32 *Coloreo) {
+    u32 *newColors = malloc(n * sizeof(u32));
+    if(NULL == newColors){
+        // caso de error
+        return NULL;
+    }
+
+    // Obtenemos el máximo color usado
+    u32 maxColor = Coloreo[0];
+    for(u32 i=0; i<n; ++i){
+        if(Coloreo[i]>maxColor){
+            maxColor = Coloreo[i];
+        }
+    }
+
+    u32 *CardC = calloc(maxColor + 1, sizeof(u32));
+    if (NULL == CardC) {
+        // Caso de error
+        free(newColors);
+        newColors = NULL;
+        return NULL;
+    }
+
+    // Obtenemos cardinalidad de cada color
+    for(u32 i=0; i<n; ++i){
+        ++CardC[Coloreo[i]];
+    }
+
+    // Arreglo para los nuevos nombres que va a tener cada color
+    u32 *OrdC = malloc((maxColor + 1) * sizeof(u32));
+    if (NULL == OrdC) {
+        // caso de error
+        free(newColors);
+        free(CardC);
+        newColors = NULL;
+        CardC = NULL;
+        return NULL;
+    }
+
+    // Obtenemos el nuevo nombre de cada color
+    char c = OrdenFromKey(maxColor, CardC, OrdC);
+    if (c) {
+        // caso de error
+        free(CardC);
+        free(OrdC);
+        free(newColors);
+        CardC = NULL;
+        OrdC = NULL;
+        newColors = NULL;
+        return NULL;
+    }
+
+    // Que Bueno Estaria tener este array...
+    u32 *QBE = malloc((maxColor+1) * sizeof(u32));
+    if (NULL == QBE) {
+        // caso de error
+        free(CardC);
+        free(OrdC);
+        free(newColors);
+        CardC = NULL;
+        OrdC = NULL;
+        newColors = NULL;
+        return NULL;
+    }
+
+    for(int i = 0; i < maxColor+1; ++i){
+        QBE[OrdC[i]] = i;
+    }
+    // Renombramos cada color
+    for(u32 i = 0; i < n; ++i)
+        newColors[i] = QBE[Coloreo[i]];
+
+    free(CardC);
+    free(OrdC);
+    free(QBE);
+    CardC = NULL;
+    OrdC = NULL;
+    QBE = NULL;
+
+    return newColors;
 }

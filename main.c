@@ -91,40 +91,70 @@ static void testGreedy(Grafo G) {
     Orden = NULL;
 }
 
-void testOrdenFromKey(void) {
-    u32 rango = 3;
-    u32 *Key=NULL, *Orden=NULL;
-    Orden = calloc(rango+1, sizeof(u32));
-    Key   = calloc(rango+1, sizeof(u32));
-    Key[0] = 2;
-    Key[1] = 3;
-    Key[2] = 0;
-    Key[3] = 1;
+// void testOrdenFromKey(void) {
+//     u32 n = 6;
+//     u32 *Key=NULL;
+//     Key   = calloc(n, sizeof(u32));
+//     Key[0] = 1;
+//     Key[1] = 0;
+//     Key[2] = 2;
+//     Key[3] = 1;
+//     Key[4] = 2;
+//     Key[5] = 1;
+//     u32 *ordenado = RecoloreoCardinalidadDecrecienteBC(n, Key);
+//     for(u32 i = 0; i < n; ++i){
+//         printf("%u ", ordenado[i]);
+//     }
+//     printf("\n");
+//     /*
+//     array original = [1 0 2 1 2 1]
+//     colores=     [0  1  2]
+//     se usan veces 1   3  2
+//     ordenamos segun las veces-> [1 2 0]
 
-    char ordenado = OrdenFromKey(rango, Key, Orden);
-    if (!ordenado) {
-        for(u32 i = 0; i < rango+1; ++i){
-            printf("%u ", Orden[i]);
-        }
-        printf("\n");
+//     Reemplazamos todo el array original de la siguiente forma->
+//     Por cada elemento del original, la posicion de ese elemento en el array ordenado
+//     segun las veces -> QBE
+
+//     Deberia devolver [0 2 1 0 1 0] mal, devuelve [0 1 2 0 2 0]
+//     */
+//     free(Key);
+//     Key = NULL;
+// }
+
+void testRecoloreoCardDecBC(void) {
+    u32 n = 11;
+    u32 *Coloreo = calloc(n, sizeof(u32));
+    Coloreo[0] = 0;
+    Coloreo[1] = 0;
+    Coloreo[2] = 2;
+    Coloreo[3] = 3;
+    Coloreo[4] = 1;
+    Coloreo[5] = 0;
+    Coloreo[6] = 3;
+    Coloreo[7] = 0;
+    Coloreo[8] = 3;
+    Coloreo[9] = 2;
+    Coloreo[10] = 0;
+    u32 *Recoloreo = RecoloreoCardinalidadDecrecienteBC(n, Coloreo);
+    for(u32 i = 0; i < n; ++i){
+        printf("%u ", Recoloreo[i]);
     }
-
-    free(Key);
-    Key = NULL;
-    free(Orden);
-    Orden = NULL;
+    printf("\n");
+    free(Recoloreo);
+    Recoloreo = NULL;
 }
 
 int main() {
-    Grafo G = ConstruccionDelGrafo();
+    //Grafo G = ConstruccionDelGrafo();
     // dumpGrafo(G);
 
     // testBipartito(G);
     // testGreedy(G);
+    testRecoloreoCardDecBC();
+    /* testOrdenFromKey(); */
 
-    testOrdenFromKey();
-
-    DestruccionDelGrafo(G);
-    G = NULL;
+    //DestruccionDelGrafo(G);
+    //G = NULL;
     return 0;
 }
