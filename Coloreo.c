@@ -34,14 +34,6 @@ static bool BFSBipartito(Grafo G, u32 parent, u32 *coloreo){
     return true;
 }
 
-static u32 pseudoRandom(u32 R, u32 i) {
-    R = R<<10;
-    R = R+123;
-    R = R*50;
-    R *= (R + i + 1);
-    return R;
-}
-
 u32 *Bipartito(Grafo G){
     u32 vertices = NumeroDeVertices(G);
     u32 *coloreo = calloc(vertices, sizeof(u32));
